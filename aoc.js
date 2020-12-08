@@ -53,7 +53,7 @@ days[2] = function(data) {
             let n = code.split('').reduce((n, chr) => n + (chr == control), 0);
             return valid + (n >= range[0] && n <= range[1]);
         }, 0);
-        log('Valid passords (part 1): ' + valid);
+        log('Valid passwords (part 1): ' + valid);
     }
     
     // Part 2:
@@ -66,7 +66,7 @@ days[2] = function(data) {
             let code = parts[2];
             return valid + (code[positions[0]] == control ^ code[positions[1]] == control);
         }, 0);
-        log('Valid passords (part 2): ' + valid);
+        log('Valid passwords (part 2): ' + valid);
     }
 };
 
