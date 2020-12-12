@@ -845,6 +845,10 @@ days[12] = function(data, vis) {
 
 
 async function run() {
+    let canvas = document.querySelector('canvas');
+    if (canvas) {
+        document.body.removeChild(canvas);
+    }
     document.querySelector('pre').textContent = '';
     let hash = location.hash.slice(1).split('v');
     let day = hash[0];
