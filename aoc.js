@@ -844,6 +844,34 @@ days[12] = function(data, vis) {
 };
 
 
+days[13] = function(data) {
+    // Part 1:
+    {
+        let lines = data.split('\n');
+        let time = lines[0];
+        let schedule = lines[1].split(',').flatMap(interval => interval == 'x' ? [] : [interval]);
+        let offsets = schedule.map(interval => interval - time % interval);
+        let id = offsets.reduce((id, offset, i) => offset < offsets[id] ? i : id, 0);
+        let multiplied = schedule[id] * offsets[id];
+        log('Multiplied ID and wait (part 1): ' + multiplied);
+    }
+    
+    // Part 2:
+    {
+        let schedule = data.split('\n')[1].split(',').map(interval => interval == 'x' ? 1 : interval * 1);
+        let time = schedule[0];
+        let step = 1;
+        schedule.forEach((interval, i) => {
+            while ((time + i) % interval != 0) {
+                time += step;
+            }
+            step *= interval;
+        });
+        log('Earliest alignment time (part 2): ' + time);
+    }
+};
+
+
 async function run() {
     let canvas = document.querySelector('canvas');
     if (canvas) {
