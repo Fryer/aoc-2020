@@ -8,12 +8,10 @@ body {
     background: #0f0f23;
     color: #cccccc;
     font-family: monospace;
+    user-select: none;
 }
 #content {
     width: 600px;
-}
-#content, canvas {
-    display: block;
     margin: auto;
 }
 a {
@@ -29,6 +27,13 @@ a:hover, a:focus {
 }
 .unavailable {
     color: #666666;
+}
+#output {
+    user-select: text;
+}
+canvas {
+    display: block;
+    margin: auto;
 }
 </style>
 </head>
