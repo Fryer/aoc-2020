@@ -15,9 +15,9 @@ function log(text) {
 let days = [];
 
 
-days[1] = function(data) {
+days[1] = {
     // Part 1:
-    {
+    1: function(data) {
         let report = data.split('\n').map(line => line * 1);
         let multiplied = -1;
         report.slice(0, -1).forEach((iLine, i) => { report.slice(i + 1).forEach((jLine, j) => {
@@ -26,10 +26,10 @@ days[1] = function(data) {
             }
         })});
         log('Multiplied expenses (part 1): ' + multiplied);
-    }
+    },
     
     // Part 2:
-    {
+    2: function(data) {
         let report = data.split('\n').map(line => line * 1);
         let multiplied = -1;
         report.slice(0, -2).forEach((iLine, i) => { report.slice(i + 1, -1).forEach((jLine, j) => { report.slice(j + 1).forEach((kLine, k) => {
@@ -42,9 +42,9 @@ days[1] = function(data) {
 };
 
 
-days[2] = function(data) {
+days[2] = {
     // Part 1:
-    {
+    1: function(data) {
         let passwords = data.split('\n');
         let valid = passwords.reduce((valid, password) => {
             let parts = password.split(' ');
@@ -55,10 +55,10 @@ days[2] = function(data) {
             return valid + (n >= range[0] && n <= range[1]);
         }, 0);
         log('Valid passwords (part 1): ' + valid);
-    }
+    },
     
     // Part 2:
-    {
+    2: function(data) {
         let passwords = data.split('\n');
         let valid = passwords.reduce((valid, password) => {
             let parts = password.split(' ');
@@ -72,19 +72,19 @@ days[2] = function(data) {
 };
 
 
-days[3] = function(data) {
+days[3] = {
     // Part 1:
-    {
+    1: function(data) {
         let rows = data.split('\n').map(row => row.split('').map(cell => cell == '#'));
         let trees = 0;
         for (let y = 0, x = 0; y < rows.length; y++, x = (x + 3) % rows[0].length) {
             trees += rows[y][x];
         }
         log('Trees encountered (part 1): ' + trees);
-    }
+    },
     
     // Part 2:
-    {
+    2: function(data) {
         let rows = data.split('\n').map(row => row.split('').map(cell => cell == '#'));
         let slopes = [[1, 1], [1, 3], [1, 5], [1, 7], [2, 1]];
         let multiplied = slopes.reduce((multiplied, slope) => {
@@ -99,9 +99,9 @@ days[3] = function(data) {
 };
 
 
-days[4] = function(data) {
+days[4] = {
     // Part 1:
-    {
+    1: function(data) {
         let valid = 0;
         let passports = data.split('\n\n');
         for (let passport of passports) {
@@ -119,10 +119,10 @@ days[4] = function(data) {
             valid++;
         }
         log('Valid passports (part 1): ' + valid);
-    }
+    },
     
     // Part 2:
-    {
+    2: function(data) {
         let validPassports = 0;
         let passports = data.split('\n\n');
         for (let passport of passports) {
@@ -196,9 +196,9 @@ days[4] = function(data) {
 };
 
 
-days[5] = function(data) {
+days[5] = {
     // Part 1:
-    {
+    1: function(data) {
         let passes = data.split('\n').map(pass => {
             return pass.split('').reduce((seat, part) => {
                 return (seat << 1) + (part == 'B' || part == 'R');
@@ -208,10 +208,10 @@ days[5] = function(data) {
             return Math.max(highest, pass);
         }, -1);
         log('Highest seat ID (part 1): ' + highest);
-    }
+    },
     
     // Part 2:
-    {
+    2: function(data) {
         let passes = data.split('\n').map(pass => {
             return pass.split('').reduce((seat, part) => {
                 return (seat << 1) + (part == 'B' || part == 'R');
@@ -233,9 +233,9 @@ days[5] = function(data) {
 };
 
 
-days[6] = function(data) {
+days[6] = {
     // Part 1:
-    {
+    1: function(data) {
         let groups = data.split('\n\n').map(group => group.split('\n'));
         let counts = groups.reduce((counts, group) => {
             let countSet = new Set();
@@ -243,10 +243,10 @@ days[6] = function(data) {
             return counts + countSet.size;
         }, 0);
         log('Sum of answer counts (part 1): ' + counts);
-    }
+    },
     
     // Part 2:
-    {
+    2: function(data) {
         let groups = data.split('\n\n').map(group => group.split('\n'));
         let counts = groups.reduce((counts, group) => {
             let countMap = {};
@@ -258,9 +258,9 @@ days[6] = function(data) {
 };
 
 
-days[7] = function(data) {
+days[7] = {
     // Part 1:
-    {
+    1: function(data) {
         let rules = Object.fromEntries(data.split('\n').map(rule => rule.replace('.', '').split(' bags contain ')).map(rule => [rule[0], rule[1].split(', ').map(inner => inner.replace(/ bags?$/, '').replace(' ', ',').split(',', 2))]));
         let cache = {};
         function canContain(rule, bag) {
@@ -276,10 +276,10 @@ days[7] = function(data) {
         }
         let colors = Object.entries(rules).reduce((colors, rule) => colors + canContain(rule, 'shiny gold'), 0);
         log('Possible bag colors (part 1): ' + colors);
-    }
+    },
     
     // Part 2:
-    {
+    2: function(data) {
         let rules = Object.fromEntries(data.split('\n').map(rule => rule.replace('.', '').split(' bags contain ')).map(rule => [rule[0], rule[1].split(', ').map(inner => inner.replace(/ bags?$/, '').replace(' ', ',').split(',', 2))]));
         let cache = {};
         function bagsInside(bag) {
@@ -299,9 +299,9 @@ days[7] = function(data) {
 };
 
 
-days[8] = function(data) {
+days[8] = {
     // Part 1:
-    {
+    1: function(data) {
         let code = data.split('\n').map(op => op.split(' ')).map(op => ({inst: op[0], num: op[1] * 1, visited: false}));
         let pos = 0;
         let acc = 0;
@@ -317,10 +317,10 @@ days[8] = function(data) {
             pos++;
         }
         log('Accumulator before looping (part 1): ' + acc);
-    }
+    },
     
     // Part 2:
-    {
+    2: function(data) {
         let code = data.split('\n').map(op => op.split(' ')).map(op => ({inst: op[0], num: op[1] * 1}));
         let acc;
         for (let changePos = 0; changePos < code.length; changePos++) {
@@ -351,9 +351,9 @@ days[8] = function(data) {
 };
 
 
-days[9] = function(data) {
+days[9] = {
     // Part 1:
-    {
+    1: function(data) {
         let numbers = data.split('\n').map(number => number * 1);
         let queue = numbers.slice(0, 25);
         let firstInvalid = -1;
@@ -369,10 +369,10 @@ days[9] = function(data) {
             }
         });
         log('First invalid number (part 1): ' + firstInvalid);
-    }
+    },
     
     // Part 2:
-    {
+    2: function(data) {
         let numbers = data.split('\n').map(number => number * 1);
         let queue = numbers.slice(0, 25);
         let firstInvalid = -1;
@@ -406,18 +406,18 @@ days[9] = function(data) {
 };
 
 
-days[10] = function(data) {
+days[10] = {
     // Part 1:
-    {
+    1: function(data) {
         let adapters = data.split('\n').map(jolts => jolts * 1).sort((a, b) => a - b);
         let distribution = [0, 0, 0, 0];
         adapters.slice(1).forEach((jolts, i) => distribution[jolts - adapters[i]]++);
         let multiplied = (distribution[1] + 1) * (distribution[3] + 1);
         log('Multiplied distribution (part 1): ' + multiplied);
-    }
+    },
     
     // Part 2:
-    {
+    2: function(data) {
         let chain = [0].concat(data.split('\n').map(jolts => jolts * 1).sort((a, b) => a - b));
         chain.push(chain[chain.length - 1] + 3);
         function subArrangements(chain) {
@@ -439,9 +439,9 @@ days[10] = function(data) {
 };
 
 
-days[11] = function(data) {
+days[11] = {
     // Part 1:
-    {
+    1: function(data) {
         let rows = data.split('\n');
         let w = rows[0].length;
         let h = rows.length;
@@ -478,10 +478,10 @@ days[11] = function(data) {
         }
         let occupied = seats.split('').reduce((occupied, seat) => occupied + (seat == '#'), 0);
         log('Occupied seats (part 1): ' + occupied);
-    }
+    },
     
     // Part 2:
-    {
+    2: function(data) {
         let rows = data.split('\n');
         let w = rows[0].length;
         let h = rows.length;
@@ -539,9 +539,9 @@ days[11] = function(data) {
 };
 
 
-days[12] = function(data, vis) {
+days[12] = {
     // Part 1:
-    if (!vis) {
+    1: function(data) {
         let moves = data.split('\n').map(move => [move[0], move.slice(1) * 1]);
         let x = 0;
         let y = 0;
@@ -574,10 +574,10 @@ days[12] = function(data, vis) {
         });
         let distance = Math.round(Math.abs(x) + Math.abs(y));
         log('Distance travelled (part 1): ' + distance);
-    }
+    },
     
     // Part 1 visualization:
-    if (vis == 1) {
+    'Visualize Part 1': function(data) {
         let moves = data.split('\n').map(move => [move[0], move.slice(1) * 1]);
         let canvas = document.createElement('canvas');
         canvas.id = 'visualization';
@@ -681,10 +681,10 @@ days[12] = function(data, vis) {
             ctx.fillText('Distance: ' + distance, 750 + cx / 2, 370 - cy / 2);
         }
         requestAnimationFrame(draw);
-    }
+    },
     
     // Part 2:
-    if (!vis) {
+    2: function(data) {
         let moves = data.split('\n').map(move => [move[0], move.slice(1) * 1]);
         let x = 0;
         let y = 0;
@@ -725,10 +725,10 @@ days[12] = function(data, vis) {
         });
         let distance = Math.round(Math.abs(x) + Math.abs(y));
         log('Distance travelled (part 2): ' + distance);
-    }
+    },
     
     // Part 2 visualization:
-    if (vis == 2) {
+    'Visualize Part 2': function(data) {
         let moves = data.split('\n').map(move => [move[0], move.slice(1) * 1]);
         let canvas = document.createElement('canvas');
         canvas.id = 'visualization';
@@ -853,9 +853,9 @@ days[12] = function(data, vis) {
 };
 
 
-days[13] = function(data) {
+days[13] = {
     // Part 1:
-    {
+    1: function(data) {
         let lines = data.split('\n');
         let time = lines[0];
         let schedule = lines[1].split(',').flatMap(interval => interval == 'x' ? [] : [interval]);
@@ -863,10 +863,10 @@ days[13] = function(data) {
         let id = offsets.reduce((id, offset, i) => offset < offsets[id] ? i : id, 0);
         let multiplied = schedule[id] * offsets[id];
         log('Multiplied ID and wait (part 1): ' + multiplied);
-    }
+    },
     
     // Part 2:
-    {
+    2: function(data) {
         let schedule = data.split('\n')[1].split(',').map(interval => interval == 'x' ? 1 : interval * 1);
         let time = schedule[0];
         let step = 1;
@@ -881,9 +881,9 @@ days[13] = function(data) {
 };
 
 
-days[14] = function(data) {
+days[14] = {
     // Part 1:
-    {
+    1: function(data) {
         let ops = data.split('\n').map(op => op.split(' = ')).map(op => [op[0].replace(']', '').split('['), op[1]]).map(op => ({ inst: op[0][0], addr: op[0][1], val: op[1] }));
         let andMask = '1'.repeat(36);
         let orMask = '0'.repeat(36);
@@ -899,10 +899,10 @@ days[14] = function(data) {
         });
         let sum = memory.reduce((sum, val) => sum + (val ? parseInt(val, 2) : 0), 0);
         log('Memory sum (part 1): ' + sum);
-    }
+    },
     
     // Part 2:
-    {
+    2: function(data) {
         let ops = data.split('\n').map(op => op.split(' = ')).map(op => [op[0].replace(']', '').split('['), op[1]]).map(op => ({ inst: op[0][0], addr: op[0][1], val: op[1] }));
         let mask = '';
         let memory = {};
@@ -928,9 +928,9 @@ days[14] = function(data) {
 
 
 async function run() {
-    let hash = location.hash.slice(1).split('v');
+    let hash = location.hash.slice(1).split('-');
     let selected = hash[0];
-    let vis = hash[1];
+    let selectedExtra = decodeURI(hash[1]);
     
     // Remove visalization.
     let canvas = document.getElementById('visualization');
@@ -945,16 +945,15 @@ async function run() {
     let nav = document.getElementById('days');
     nav.innerHTML = '';
     for (let day = 1; day <= 25; day++) {
-        nav.appendChild(document.createTextNode(' '));
+        nav.innerHTML += ' ';
         let link;
-        if (day == selected) {
-            link = document.createElement('span');
-            link.className = 'selected';
-        }
-        else if (day < days.length) {
+        if (day < days.length) {
             link = document.createElement('a');
             link.id = 'day' + day;
             link.href = '#' + day;
+            if (day == selected) {
+                link.className = 'selected';
+            }
         }
         else {
             link = document.createElement('span');
@@ -964,10 +963,35 @@ async function run() {
         nav.appendChild(link);
     }
     
+    // Add extra links.
+    let extras = document.getElementById('extras');
+    extras.innerHTML = '';
+    if (selected > 0 && selected < days.length) {
+        for (let extra of Object.keys(days[selected])) {
+            if (extra == 1 || extra == 2) {
+                continue;
+            }
+            extras.innerHTML += '&nbsp;&nbsp;' + (extras.innerHTML == '' ? '' : '&nbsp;');
+            let link = document.createElement('a');
+            link.href = '#' + selected + '-' + extra;
+            if (extra == selectedExtra) {
+                link.className = 'selected';
+            }
+            link.textContent = extra;
+            extras.appendChild(link);
+        }
+    }
+    
     // Run selected day.
     if (selected > 0 && selected < days.length) {
         let data = (await (await fetch('day' + selected + '.txt')).text()).replaceAll('\r', '').trim();
-        days[selected](data, vis);
+        if (selectedExtra && days[selected].hasOwnProperty(selectedExtra)) {
+            days[selected][selectedExtra](data);
+        }
+        else {
+            days[selected][1](data);
+            days[selected][2](data);
+        }
     }
 }
 

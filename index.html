@@ -18,12 +18,12 @@ a {
     text-decoration: none;
     color: #009900;
 }
-a:hover, a:focus {
-    color: #99ff99;
-}
 .selected {
     color: #00cc00;
     text-shadow: 0 0 2px #00cc00, 0 0 5px #00cc00;
+}
+a:hover, a:focus {
+    color: #99ff99;
 }
 .unavailable {
     color: #666666;
@@ -41,6 +41,7 @@ canvas {
 <div id="content">
 <b>Day:</b>
 <span id="days"></span>
+<p id="extras"></p>
 <pre id="output"></pre>
 </div>
 <script type="module" src="aoc.js"></script>
