@@ -1,11 +1,6 @@
 'use strict';
 
 
-async function read(file) {
-    return (await (await fetch(file)).text()).replaceAll('\r', '').trim();
-}
-
-
 function log(text) {
     let output = document.getElementById('output');
     output.textContent += (output.textContent == '' ? '' : '\n') + text;
