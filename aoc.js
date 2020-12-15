@@ -927,6 +927,61 @@ days[14] = {
 };
 
 
+days[15] = {
+    // Part 1:
+    1: function(data) {
+        let numbers = data.split(',').map(num => +num);
+        let time = 0;
+        let times = {};
+        numbers.forEach(num => {
+            times[num] = time;
+            time++;
+        });
+        let last = numbers[numbers.length - 1];
+        delete times[last];
+        while (time < 2020) {
+            let num;
+            if (times.hasOwnProperty(last)) {
+                num = time - 1 - times[last];
+            }
+            else {
+                num = 0;
+            }
+            times[last] = time - 1;
+            last = num;
+            time++;
+        }
+        log('2020th number (part 1): ' + last);
+    },
+    
+    // Part 2:
+    2: function(data) {
+        let numbers = data.split(',').map(num => +num);
+        let time = 0;
+        let times = (new Int32Array(30000000)).fill(-1);
+        numbers.forEach(num => {
+            times[num] = time;
+            time++;
+        });
+        let last = numbers[numbers.length - 1];
+        times[last] = -1;
+        while (time < 30000000) {
+            let num;
+            if (times[last] >= 0) {
+                num = time - 1 - times[last];
+            }
+            else {
+                num = 0;
+            }
+            times[last] = time - 1;
+            last = num;
+            time++;
+        }
+        log('30000000th number (part 2): ' + last);
+    }
+};
+
+
 async function run() {
     let hash = location.hash.slice(1).split('-');
     let selected = hash[0];
