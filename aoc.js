@@ -984,7 +984,7 @@ days[15] = {
 
 async function run() {
     let hash = location.hash.slice(1).split('-');
-    let selected = hash[0];
+    let selected = hash[0] > 0 && hash[0] <= 25 ? hash[0] : days.length - 1;
     let selectedExtra = decodeURI(hash[1]);
     
     // Remove visalization.
