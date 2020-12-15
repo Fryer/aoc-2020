@@ -7,7 +7,8 @@ async function read(file) {
 
 
 function log(text) {
-    document.querySelector('pre').textContent += text + '\n';
+    let output = document.getElementById('output');
+    output.textContent += (output.textContent == '' ? '' : '\n') + text;
 }
 
 
@@ -579,12 +580,16 @@ days[12] = function(data, vis) {
     if (vis == 1) {
         let moves = data.split('\n').map(move => [move[0], move.slice(1) * 1]);
         let canvas = document.createElement('canvas');
+        canvas.id = 'visualization';
         canvas.width = 900;
         canvas.height = 700;
         document.body.appendChild(canvas);
         let ctx = canvas.getContext('2d');
         let start = performance.now() / 1000;
         function draw() {
+            if (!canvas.parentNode) {
+                return;
+            }
             let now = performance.now() / 1000 - start;
             ctx.fillStyle = '#028';
             ctx.fillRect(0, 0, 900, 700);
@@ -726,12 +731,16 @@ days[12] = function(data, vis) {
     if (vis == 2) {
         let moves = data.split('\n').map(move => [move[0], move.slice(1) * 1]);
         let canvas = document.createElement('canvas');
+        canvas.id = 'visualization';
         canvas.width = 1000;
         canvas.height = 700;
         document.body.appendChild(canvas);
         let ctx = canvas.getContext('2d');
         let start = performance.now() / 1000;
         function draw() {
+            if (!canvas.parentNode) {
+                return;
+            }
             let now = performance.now() / 1000 - start;
             ctx.fillStyle = '#028';
             ctx.fillRect(0, 0, 1000, 700);
@@ -919,20 +928,46 @@ days[14] = function(data) {
 
 
 async function run() {
-    let canvas = document.querySelector('canvas');
+    let hash = location.hash.slice(1).split('v');
+    let selected = hash[0];
+    let vis = hash[1];
+    
+    // Remove visalization.
+    let canvas = document.getElementById('visualization');
     if (canvas) {
         document.body.removeChild(canvas);
     }
-    document.querySelector('pre').textContent = '';
-    let hash = location.hash.slice(1).split('v');
-    let day = hash[0];
-    let dayRange = day > 0 && day < days.length ? [day, day] : [days.length - 1, 1];
-    for (let day = dayRange[0]; day >= dayRange[1]; day--) {
-        let data = (await (await fetch('day' + day + '.txt')).text()).replaceAll('\r', '').trim();
-        log('Day ' + day);
-        log('================================');
-        days[day](data, hash[1]);
-        log('');
+    
+    // Clear output.
+    document.getElementById('output').textContent = '';
+    
+    // Add day links.
+    let nav = document.getElementById('days');
+    nav.innerHTML = '';
+    for (let day = 1; day <= 25; day++) {
+        nav.appendChild(document.createTextNode(' '));
+        let link;
+        if (day == selected) {
+            link = document.createElement('span');
+            link.className = 'selected';
+        }
+        else if (day < days.length) {
+            link = document.createElement('a');
+            link.id = 'day' + day;
+            link.href = '#' + day;
+        }
+        else {
+            link = document.createElement('span');
+            link.className = 'unavailable';
+        }
+        link.textContent = day;
+        nav.appendChild(link);
+    }
+    
+    // Run selected day.
+    if (selected > 0 && selected < days.length) {
+        let data = (await (await fetch('day' + selected + '.txt')).text()).replaceAll('\r', '').trim();
+        days[selected](data, vis);
     }
 }
 

@@ -5,13 +5,39 @@
 <title>Advent of Code 2020 - Fryer's solutions</title>
 <style>
 body {
-    background: #222;
-    color: #999;
+    background: #0f0f23;
+    color: #cccccc;
+    font-family: monospace;
+}
+#content {
+    width: 600px;
+}
+#content, canvas {
+    display: block;
+    margin: auto;
+}
+a {
+    text-decoration: none;
+    color: #009900;
+}
+a:hover, a:focus {
+    color: #99ff99;
+}
+.selected {
+    color: #00cc00;
+    text-shadow: 0 0 2px #00cc00, 0 0 5px #00cc00;
+}
+.unavailable {
+    color: #666666;
 }
 </style>
 </head>
 <body>
-<pre></pre>
+<div id="content">
+<b>Day:</b>
+<span id="days"></span>
+<pre id="output"></pre>
+</div>
 <script type="module" src="aoc.js"></script>
 </body>
 </html>
