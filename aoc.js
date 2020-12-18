@@ -1133,6 +1133,97 @@ days[17] = {
 };
 
 
+days[18] = {
+    // Part 1:
+    1: function(data) {
+        let exprs = data.split('\n').map(expr => expr.replaceAll(' ', ''));
+        function compute(expr) {
+            let stack = [];
+            let answer = 0;
+            let op = '+';
+            for (let i = 0; i < expr.length; i++) {
+                if (expr[i] == '(') {
+                    stack.push([answer, op]);
+                    answer = 0;
+                    op = '+';
+                }
+                else if (expr[i] == ')') {
+                    let [stackAnswer, stackOp] = stack.pop();
+                    answer = stackOp == '+' ? stackAnswer + answer : stackAnswer * answer;
+                }
+                else if (expr[i] == '+' || expr[i] == '*') {
+                    op = expr[i];
+                }
+                else {
+                    answer = op == '+' ? answer + (+expr[i]) : answer * expr[i];
+                }
+            }
+            return answer;
+        }
+        let sum = exprs.reduce((sum, expr) => sum + compute(expr), 0);
+        log('Sum of expressions (part 1): ' + sum);
+    },
+    
+    // Part 2:
+    2: function(data) {
+        let exprs = data.split('\n').map(expr => expr.replaceAll(' ', ''));
+        function compute(expr) {
+            let stack = [];
+            let answer = 0;
+            let op = '+';
+            let level = 0;
+            function push() {
+                stack.push([answer, op, level]);
+                answer = 0;
+                op = '+';
+                level = 0;
+            }
+            function pop(nextOp) {
+                let part = answer;
+                [answer, op, level] = stack.pop();
+                computePart(part, nextOp);
+            }
+            function computePart(part, nextOp) {
+                if (nextOp == '+' && level == 0) {
+                    push();
+                    answer = part;
+                    level = 1;
+                    return;
+                }
+                answer = op == '+' ? answer + part : answer * part;
+                if (nextOp == '*' && level == 1) {
+                    pop(nextOp);
+                }
+            }
+            for (let i = 0; i < expr.length; i++) {
+                let nextOp = i + 1 < expr.length ? expr[i + 1] : '';
+                if (expr[i] == '(') {
+                    push();
+                }
+                else if (expr[i] == ')') {
+                    if (level == 1) {
+                        pop('');
+                    }
+                    pop(nextOp);
+                }
+                else if (expr[i] == '+' || expr[i] == '*') {
+                    op = expr[i];
+                }
+                else {
+                    computePart(+expr[i], nextOp);
+                }
+            }
+            if (level == 1) {
+                pop('');
+            }
+            return answer;
+        }
+        let sum = exprs.reduce((sum, expr) => sum + compute(expr), 0);
+        log('Sum of expressions (part 2): ' + sum);
+    }
+};
+
+
 async function run() {
     let hash = location.hash.slice(1).split('-');
     let selected = hash[0] > 0 && hash[0] <= 25 ? hash[0] : days.length - 1;
