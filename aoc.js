@@ -1229,7 +1229,6 @@ days[19] = {
     1: function(data) {
         let [rules, msgs] = data.split('\n\n');
         rules = Object.fromEntries(rules.split('\n').map(rule => rule.split(': ')));
-        console.log(rules);
         function expand(rule) {
             if (rule[0] == '"') {
                 return rule[1];
@@ -1237,7 +1236,6 @@ days[19] = {
             return '(' + rule.split(' ').reduce((rule, part) => rule + (part == '|' ? '|' : expand(rules[part])), '') + ')';
         }
         let rule = new RegExp('^' + expand(rules[0]) + '$', 'gm');
-        console.log(rule);
         let matches = msgs.match(rule).length;
         log('Messages lines (part 1): ' + matches);
     },
@@ -1248,7 +1246,6 @@ days[19] = {
         rules = rules.replace('8: 42', '8: 42 | 42 8');
         rules = rules.replace('11: 42 31', '11: 42 31 | 42 11 31');
         rules = Object.fromEntries(rules.split('\n').map(rule => rule.split(': ')));
-        console.log(rules);
         let n8 = 0;
         let n11 = 0;
         function expand(i, rule, n8, n11) {
@@ -1266,7 +1263,6 @@ days[19] = {
             return '(' + rule.split(' ').reduce((rule, part) => rule + (part == '|' ? '|' : expand(part, rules[part], n8, n11)), '') + ')';
         }
         let rule = new RegExp('^' + expand(0, rules[0], 0, 0) + '$', 'gm');
-        console.log(rule);
         let matches = msgs.match(rule).length;
         log('Messages lines (part 2): ' + matches);
     }
