@@ -1224,6 +1224,55 @@ days[18] = {
 };
 
 
+days[19] = {
+    // Part 1:
+    1: function(data) {
+        let [rules, msgs] = data.split('\n\n');
+        rules = Object.fromEntries(rules.split('\n').map(rule => rule.split(': ')));
+        console.log(rules);
+        function expand(rule) {
+            if (rule[0] == '"') {
+                return rule[1];
+            }
+            return '(' + rule.split(' ').reduce((rule, part) => rule + (part == '|' ? '|' : expand(rules[part])), '') + ')';
+        }
+        let rule = new RegExp('^' + expand(rules[0]) + '$', 'gm');
+        console.log(rule);
+        let matches = msgs.match(rule).length;
+        log('Messages lines (part 1): ' + matches);
+    },
+    
+    // Part 2:
+    2: function(data) {
+        let [rules, msgs] = data.split('\n\n');
+        rules = rules.replace('8: 42', '8: 42 | 42 8');
+        rules = rules.replace('11: 42 31', '11: 42 31 | 42 11 31');
+        rules = Object.fromEntries(rules.split('\n').map(rule => rule.split(': ')));
+        console.log(rules);
+        let n8 = 0;
+        let n11 = 0;
+        function expand(i, rule, n8, n11) {
+            if (i == 8 && n8 == 5) {
+                return '(' + expand(42, rules[42], n8, n11) + ')';
+            }
+            if (i == 11 && n11 == 5) {
+                return '(' + expand(42, rules[42], n8, n11) + expand(31, rules[31], n8, n11) + ')';
+            }
+            n8 += i == 8;
+            n11 += i == 11;
+            if (rule[0] == '"') {
+                return rule[1];
+            }
+            return '(' + rule.split(' ').reduce((rule, part) => rule + (part == '|' ? '|' : expand(part, rules[part], n8, n11)), '') + ')';
+        }
+        let rule = new RegExp('^' + expand(0, rules[0], 0, 0) + '$', 'gm');
+        console.log(rule);
+        let matches = msgs.match(rule).length;
+        log('Messages lines (part 2): ' + matches);
+    }
+};
+
+
 async function run() {
     let hash = location.hash.slice(1).split('-');
     let selected = hash[0] > 0 && hash[0] <= 25 ? hash[0] : days.length - 1;
