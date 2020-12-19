@@ -35,6 +35,11 @@ canvas {
     display: block;
     margin: auto;
 }
+#editor {
+    margin: auto;
+    width: 1400px;
+    height: 800px;
+}
 </style>
 </head>
 <body>
@@ -44,6 +49,12 @@ canvas {
 <p id="extras"></p>
 <pre id="output"></pre>
 </div>
+<script src="ace/ace.js"></script>
+<script src="ace/ext-prompt.js"></script>
+<script src="ace/ext-searchbox.js"></script>
+<script src="ace/theme-twilight.js"></script>
+<script src="ace/mode-javascript.js"></script>
+<script src="ace/ext-language_tools.js"></script>
 <script type="module" src="aoc.js"></script>
 </body>
 </html>

@@ -1271,7 +1271,7 @@ days[19] = {
 
 async function run() {
     let hash = location.hash.slice(1).split('-');
-    let selected = hash[0] > 0 && hash[0] <= 25 ? hash[0] : days.length - 1;
+    let selected = hash[0] == 'editor' || (hash[0] > 0 && hash[0] < days.length) ? hash[0] : days.length - 1;
     let selectedExtra = decodeURI(hash[1]);
     
     // Remove visalization.
@@ -1283,6 +1283,13 @@ async function run() {
     // Clear output.
     document.getElementById('output').textContent = '';
     
+    // Close editor.
+    if (window.hasOwnProperty('editor')) {
+        editor.destroy();
+        editor.container.remove();
+        delete window.editor;
+    }
+    
     // Add day links.
     let nav = document.getElementById('days');
     nav.innerHTML = '';
@@ -1291,7 +1298,6 @@ async function run() {
         let link;
         if (day < days.length) {
             link = document.createElement('a');
-            link.id = 'day' + day;
             link.href = '#' + day;
             if (day == selected) {
                 link.className = 'selected';
@@ -1304,6 +1310,16 @@ async function run() {
         link.textContent = day;
         nav.appendChild(link);
     }
+    
+    // Add editor link.
+    nav.innerHTML += '&nbsp;&nbsp;';
+    let link = document.createElement('a');
+    link.href = '#editor';
+    if (selected == 'editor') {
+        link.className = 'selected';
+    }
+    link.textContent = '+';
+    nav.appendChild(link);
     
     // Add extra links.
     let extras = document.getElementById('extras');
@@ -1334,6 +1350,30 @@ async function run() {
             days[selected][1](data);
             days[selected][2](data);
         }
+    }
+    
+    // Open editor.
+    if (selected == 'editor') {
+        let editorDiv = document.createElement('div');
+        editorDiv.id = 'editor';
+        editorDiv.textContent = 'let lines = data.split(\'\\n\');\nconsole.log(lines);\nlog(\'(part 1): \');\n';
+        document.body.appendChild(editorDiv);
+        window.editor = ace.edit(editorDiv);
+        editor.setOptions({
+            enableBasicAutocompletion: true,
+            enableLiveAutocompletion: true
+        });
+        editor.session.setOptions({
+            useWorker: false,
+            mode: 'ace/mode/javascript'
+        });
+        editor.renderer.setOptions({
+            theme: 'ace/theme/twilight',
+            fontFamily: 'monospace',
+            fontSize: 'unset',
+            printMargin: false,
+        });
+        editor.commands.removeCommand('showSettingsMenu');
     }
 }
 
