@@ -1,0 +1,38 @@
+body {
+    background: #0f0f23;
+    color: #cccccc;
+    font-family: monospace;
+    user-select: none;
+}
+#content {
+    width: 600px;
+    margin: auto;
+}
+a {
+    text-decoration: none;
+    color: #009900;
+}
+.selected {
+    color: #00cc00;
+    text-shadow: 0 0 2px #00cc00, 0 0 5px #00cc00;
+}
+a:hover, a:focus {
+    color: #99ff99;
+}
+.unavailable {
+    color: #666666;
+}
+#output {
+    user-select: text;
+}
+canvas {
+    display: block;
+    margin: auto;
+}
+
+/* Editor */
+#editor {
+    margin: auto;
+    width: 1400px;
+    height: 800px;
+}
