@@ -1508,7 +1508,6 @@ days[21] = {
         }
         let list = [];
         let allergensLeft = new Set(Object.keys(allergens));
-        let n = 0;
         while (list.length < Object.keys(allergens).length) {
             let delAllergen;
             let delIngredient;
@@ -1519,10 +1518,6 @@ days[21] = {
                     list.push({ ingredient: delIngredient, allergen: allergen });
                     break;
                 }
-            }
-            n++;
-            if (n > 20) {
-                return;
             }
             allergensLeft.delete(delAllergen);
             for (let [allergen, ingredients] of Object.entries(allergens)) {
