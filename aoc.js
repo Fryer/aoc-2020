@@ -1584,6 +1584,75 @@ days[22] = {
 };
 
 
+days[23] = {
+    // Part 1:
+    1: function(data) {
+        let cups = data.split('').map(cup => +cup);
+        let top = cups.length;
+        cups.unshift(cups.pop());
+        for (let i = 0; i < 100; i++) {
+            cups.push(cups.shift());
+            let removed = [cups[1], cups[2], cups[3]];
+            cups = [cups[0]].concat(cups.slice(4));
+            let destination = cups[0] - 1 < 1 ? top : cups[0] - 1;
+            let n = 0;
+            while (cups.indexOf(destination) < 0) {
+                if (n > 10) return;
+                n++;
+                destination = destination == 1 ? top : destination - 1;
+            }
+            let index = cups.indexOf(destination) + 1;
+            cups = cups.slice(0, index).concat(removed, cups.slice(index));
+        }
+        let index = cups.indexOf(1);
+        let order = cups.slice(index + 1).concat(cups.slice(0, index)).join('');
+        log('Cup order (part 1): ' + order);
+    },
+    
+    // Part 2:
+    2: function(data) {
+        let input = data.split('').map(cup => cup - 1);
+        let next = new Int32Array(1000000);
+        let prev = new Int32Array(1000000);
+        for (let i = 0; i < 1000000; i++) {
+            next[i] = i + 1;
+            prev[i] = i - 1;
+        }
+        next[999999] = 0;
+        prev[0] = 999999;
+        let current = 999999;
+        for (let cup of input) {
+            next[prev[cup]] = next[cup];
+            prev[next[cup]] = prev[cup];
+            next[cup] = next[current];
+            prev[cup] = current;
+            prev[next[current]] = cup;
+            next[current] = cup;
+            current = cup;
+        }
+        current = 999999;
+        for (let i = 0; i < 10000000; i++) {
+            current = next[current];
+            let a = next[current];
+            let b = next[a];
+            let c = next[b];
+            next[current] = next[c];
+            prev[next[c]] = current;
+            let destination = current - 1 < 0 ? 999999 : current - 1;
+            while (destination == a || destination == b || destination == c) {
+                destination = destination == 0 ? 999999 : destination - 1;
+            }
+            next[c] = next[destination];
+            prev[a] = destination;
+            prev[next[destination]] = c;
+            next[destination] = a;
+        }
+        let multiplied = (next[0] + 1) * (next[next[0]] + 1);
+        log('Multiplied cups (part 2): ' + multiplied);
+    }
+};
+
+
 async function run() {
     let hash = location.hash.slice(1).split('-');
     let selected = hash[0] == 'editor' || (hash[0] > 0 && hash[0] < days.length) ? hash[0] : days.length - 1;
