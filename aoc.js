@@ -1766,7 +1766,7 @@ days[24] = {
             tiles = newTiles;
             flipped = newFlipped;
         }
-        log('Black tiles (part 1): ' + flipped.size);
+        log('Black tiles (part 2): ' + flipped.size);
     }
 };
 
