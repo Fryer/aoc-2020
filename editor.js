@@ -4,34 +4,54 @@ let editor = null;
 export function open() {
     close();
     
-    let editorDiv = document.createElement('div');
-    editorDiv.id = 'editor';
-    editorDiv.textContent = 'let lines = data.split(\'\\n\');\nconsole.log(lines);\nlog(\'(part 1): \');\n';
-    document.body.appendChild(editorDiv);
+    editor = CodeMirror(document.body, {
+        value: 'let lines = data.split(\'\\n\');\nconsole.log(lines);\nlog(\'(part 1): \');\n',
+        mode: 'javascript',
+        theme: 'tomorrow-night-bright',
+        indentUnit: 4,
+        extraKeys: { 'Ctrl-Space': 'autocomplete' },
+        lineWrapping: true,
+        lineNumbers: true,
+        gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter', 'CodeMirror-lint-markers'],
+        matchBrackets: true,
+        autoCloseBrackets: true,
+        foldGutter: true,
+        foldOptions: { widget: '...' },
+        highlightSelectionMatches: true,
+        lint: {
+            esversion: 10,
+            globals: ['data', 'log'],
+            latedef: 'nofunc',
+            strict: 'implied',
+            undef: true,
+            unused: true,
+            varstmt: true,
+            boss: true,
+            loopfunc: true,
+            browser: true,
+            devel: true
+        },
+        styleActiveLine: { nonEmpty: true },
+        selectionPointer: true,
+        scrollPastEnd: true
+    });
     
-    editor = ace.edit(editorDiv);
-    editor.setOptions({
-        enableBasicAutocompletion: true,
-        enableLiveAutocompletion: true
+    let autoHintTokens = new Set(['property', 'variable', 'keyword', 'atom']);
+    editor.on('change', (instance, changeObj) => {
+        let token = instance.getTokenAt(instance.getDoc().getCursor(), true);
+        if (token.string == '.' || autoHintTokens.has(token.type)) {
+            instance.showHint({ completeSingle: false });
+        }
+        else {
+            instance.closeHint();
+        }
     });
-    editor.session.setOptions({
-        useWorker: false,
-        mode: 'ace/mode/javascript'
-    });
-    editor.renderer.setOptions({
-        theme: 'ace/theme/twilight',
-        fontFamily: 'monospace',
-        fontSize: 'unset',
-        printMargin: false,
-    });
-    editor.commands.removeCommand('showSettingsMenu');
 };
 
 
 export function close() {
     if (editor) {
-        editor.destroy();
-        editor.container.remove();
-        delete window.editor;
+        editor.getWrapperElement().remove();
+        editor = null;
     }
 }

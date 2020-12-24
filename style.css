@@ -31,8 +31,33 @@ canvas {
 }
 
 /* Editor */
-#editor {
+.CodeMirror {
     margin: auto;
     width: 1400px;
     height: 800px;
 }
+.CodeMirror-foldmarker {
+    font-weight: bold;
+    color: #eaeaea;
+    background: #242830;
+    outline: 1px solid #405060;
+    line-height: .3;
+    cursor: pointer;
+}
+.CodeMirror-foldgutter {
+    width: .7em;
+}
+.CodeMirror-foldgutter-open,
+.CodeMirror-foldgutter-folded {
+    cursor: pointer;
+}
+.CodeMirror-foldgutter-open:after {
+    content: "\25BE";
+}
+.CodeMirror-foldgutter-folded:after {
+    content: "\25B8";
+}
+.cm-matchhighlight {
+    outline: 1px solid #2f4c3c;
+}
+
