@@ -1,11 +1,41 @@
 let editor = null;
+let code = null;
+let input = null;
+let output = null;
+
+let commands = {};
 
 
 export function open() {
     close();
     
-    editor = CodeMirror(document.body, {
-        value: 'let lines = data.split(\'\\n\');\nconsole.log(lines);\nlog(\'(part 1): \');\n',
+    // Set up panels.
+    editor = document.createElement('div');
+    editor.id = 'editor';
+    document.body.appendChild(editor);
+    let left = document.createElement('div');
+    left.id = 'editor-left';
+    editor.appendChild(left);
+    let right = document.createElement('div');
+    right.id = 'editor-right';
+    editor.appendChild(right);
+    
+    // Add commands.
+    let links = document.createElement('p');
+    for (let [name, command] of Object.entries(commands)) {
+        let spacing = document.createTextNode('\u00a0\u00a0\u00a0' + (links.innerHTML == '' ? '\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0' : ''));
+        links.appendChild(spacing);
+        let link = document.createElement('a');
+        link.href = '#editor';
+        link.textContent = name;
+        link.addEventListener('click', command);
+        links.appendChild(link);
+    }
+    left.appendChild(links);
+    
+    // Instantiate code editor.
+    code = CodeMirror(left, {
+        value: 'log(data);\n',
         mode: 'javascript',
         theme: 'tomorrow-night-bright',
         indentUnit: 4,
@@ -28,16 +58,17 @@ export function open() {
             varstmt: true,
             boss: true,
             loopfunc: true,
-            browser: true,
             devel: true
         },
         styleActiveLine: { nonEmpty: true },
         selectionPointer: true,
         scrollPastEnd: true
     });
+    code.getWrapperElement().id = 'editor-code';
     
+    // Enable autocomplete on input.
     let autoHintTokens = new Set(['property', 'variable', 'keyword', 'atom']);
-    editor.on('change', (instance, changeObj) => {
+    code.on('change', (instance, changeObj) => {
         let token = instance.getTokenAt(instance.getDoc().getCursor(), true);
         if (token.string == '.' || autoHintTokens.has(token.type)) {
             instance.showHint({ completeSingle: false });
@@ -46,12 +77,59 @@ export function open() {
             instance.closeHint();
         }
     });
-};
+    
+    // Instantiate input editor.
+    let inputLabel = document.createElement('p');
+    inputLabel.innerHTML = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Input:';
+    right.appendChild(inputLabel);
+    input = CodeMirror(right, {
+        mode: null,
+        theme: 'tomorrow-night-bright',
+        smartIndent: false,
+        electricChars: false,
+        lineNumbers: true,
+        highlightSelectionMatches: true,
+        styleActiveLine: { nonEmpty: true },
+        selectionPointer: true,
+        scrollPastEnd: true
+    });
+    input.getWrapperElement().id = 'editor-input';
+    
+    // Instantiate output view.
+    let outputLabel = document.createElement('p');
+    outputLabel.innerHTML = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Output:';
+    right.appendChild(outputLabel);
+    output = CodeMirror(right, {
+        mode: null,
+        theme: 'tomorrow-night-bright',
+        smartIndent: false,
+        electricChars: false,
+        lineNumbers: true,
+        readOnly: true,
+        highlightSelectionMatches: true,
+        styleActiveLine: { nonEmpty: true },
+        selectionPointer: true,
+        scrollPastEnd: true
+    });
+    output.getWrapperElement().id = 'editor-output';
+}
 
 
 export function close() {
     if (editor) {
-        editor.getWrapperElement().remove();
-        editor = null;
+        editor.remove();
+        output = null;
     }
 }
+
+
+function log(text) {
+    let value = output.getDoc().getValue();
+    output.getDoc().setValue(value + (value == '' ? '' : '\n') + text);
+}
+
+
+commands['Run'] = function() {
+    output.getDoc().setValue('');
+    (new Function('data', 'log', code.getDoc().getValue()))(input.getDoc().getValue().trim(), log);
+};

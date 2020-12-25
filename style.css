@@ -1,12 +1,19 @@
+html {
+    height: 100%;
+}
 body {
+    height: calc(100% - 16px);
+    margin: 8px;
+    display: flex;
+    flex-flow: column;
     background: #0f0f23;
     color: #cccccc;
     font-family: monospace;
     user-select: none;
 }
 #content {
-    width: 600px;
-    margin: auto;
+    margin: 0 auto auto;
+    flex: 0 1 auto;
 }
 a {
     text-decoration: none;
@@ -31,10 +38,32 @@ canvas {
 }
 
 /* Editor */
-.CodeMirror {
-    margin: auto;
-    width: 1400px;
-    height: 800px;
+#editor {
+    flex: 1 1 auto;
+    display: flex;
+    flex-flow: row;
+}
+#editor-left {
+    flex: 1 1 auto;
+    display: flex;
+    flex-flow: column;
+}
+#editor-right {
+    flex: 0 1 auto;
+    min-width: 40%;
+    display: flex;
+    flex-flow: column;
+    margin-left: 2px;
+}
+#editor-code {
+    flex: 1 1 auto;
+}
+#editor-input {
+    flex: 1 1 auto;
+}
+#editor-output {
+    flex: 0 1 auto;
+    min-height: 40%;
 }
 .CodeMirror-foldmarker {
     font-weight: bold;
