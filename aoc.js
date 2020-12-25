@@ -1771,6 +1771,35 @@ days[24] = {
 };
 
 
+days[25] = {
+    // Part 1:
+    1: function(data) {
+        let [cardKey, doorKey] = data.split('\n').map(key => +key);
+        function getLoop(subject, target) {
+            let key = 1;
+            let loop = 0;
+            while (key != target) {
+                key *= subject;
+                key %= 20201227;
+                loop++;
+            }
+            return loop;
+        }
+        function transform(subject, nLoop) {
+            let key = 1;
+            for (let i = 0; i < nLoop; i++) {
+                key *= subject;
+                key %= 20201227;
+            }
+            return key;
+        }
+        let doorLoop = getLoop(7, doorKey);
+        let key = transform(cardKey, doorLoop);
+        log('Encryption key (part 1): ' + key);
+    }
+}
+
+
 async function run() {
     let hash = location.hash.slice(1).split('-');
     let selected = hash[0] == 'editor' || (hash[0] > 0 && hash[0] < days.length) ? hash[0] : days.length - 1;
