@@ -1796,6 +1796,11 @@ days[25] = {
         let doorLoop = getLoop(7, doorKey);
         let key = transform(cardKey, doorLoop);
         log('Encryption key (part 1): ' + key);
+    },
+    
+    // Part 2:
+    2: function() {
+        // Free!
     }
 }
 
