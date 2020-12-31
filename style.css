@@ -12,8 +12,9 @@ body {
     user-select: none;
 }
 #content {
-    margin: 0 auto auto;
     flex: 0 1 auto;
+    width: 100%;
+    text-align: center;
 }
 a {
     text-decoration: none;
@@ -32,12 +33,27 @@ a:hover, a:focus {
 #output {
     user-select: text;
 }
+#overlay {
+    position: fixed;
+    z-index: 10;
+    visibility: hidden;
+    width: 100%;
+    height: 100%;
+    display: flex;
+}
 canvas {
-    display: block;
+    visibility: visible;
     margin: auto;
 }
 
 /* Editor */
+.command {
+    color: #009900;
+    cursor: pointer;
+}
+.command:hover {
+    color: #99ff99;
+}
 #editor {
     flex: 1 1 auto;
     display: flex;
@@ -51,6 +67,7 @@ canvas {
 #editor-right {
     flex: 0 1 auto;
     min-width: 40%;
+    max-width: 40%;
     display: flex;
     flex-flow: column;
     margin-left: 2px;

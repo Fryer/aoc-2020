@@ -25,8 +25,8 @@ export function open() {
     for (let [name, command] of Object.entries(commands)) {
         let spacing = document.createTextNode('\u00a0\u00a0\u00a0' + (links.innerHTML == '' ? '\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0' : ''));
         links.appendChild(spacing);
-        let link = document.createElement('a');
-        link.href = '#editor';
+        let link = document.createElement('span');
+        link.className = 'command';
         link.textContent = name;
         link.addEventListener('click', command);
         links.appendChild(link);
@@ -35,7 +35,6 @@ export function open() {
     
     // Instantiate code editor.
     code = CodeMirror(left, {
-        value: 'log(data);\n',
         mode: 'javascript',
         theme: 'tomorrow-night-bright',
         indentUnit: 4,
@@ -58,6 +57,7 @@ export function open() {
             varstmt: true,
             boss: true,
             loopfunc: true,
+            browser: true,
             devel: true
         },
         styleActiveLine: { nonEmpty: true },
@@ -123,13 +123,31 @@ export function close() {
 }
 
 
+export function reset(source, data) {
+    if (!editor) {
+        open();
+    }
+    
+    code.setValue(source);
+    input.setValue(data);
+    output.setValue('');
+}
+
+
 function log(text) {
     let value = output.getDoc().getValue();
-    output.getDoc().setValue(value + (value == '' ? '' : '\n') + text);
+    output.getDoc().setValue(value + text + '\n');
 }
 
 
 commands['Run'] = function() {
+    // Remove visalization.
+    let canvas = document.getElementById('visualization');
+    if (canvas) {
+        canvas.remove();
+    }
+    
+    // Run code.
     output.getDoc().setValue('');
     (new Function('data', 'log', code.getDoc().getValue()))(input.getDoc().getValue().trim(), log);
 };
