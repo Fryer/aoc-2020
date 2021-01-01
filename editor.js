@@ -3,7 +3,37 @@ let code = null;
 let input = null;
 let output = null;
 
-let commands = {};
+let source = '';
+let data = '';
+
+let commands = [
+    { name: 'Run', callback: run },
+    { name: 'Stop', callback: stop },
+    { name: 'Clear', callback: clear },
+    { name: 'Reset', callback: reset }
+];
+
+let runner = null;
+let bindings = {
+    log: log,
+    visualize: visualize,
+    drawFrame: drawFrame,
+    fillStyle: (fillStyle) => drawCalls.push(() => ctx.fillStyle = fillStyle),
+    strokeStyle: (strokeStyle) => drawCalls.push(() => ctx.strokeStyle = strokeStyle),
+    lineWidth: (lineWidth) => drawCalls.push(() => ctx.lineWidth = lineWidth),
+    font: (font) => drawCalls.push(() => ctx.font = font),
+    textAlign: (textAlign) => drawCalls.push(() => ctx.textAlign = textAlign),
+    clear: () => drawCalls.push(() => ctx.fillRect(0, 0, canvas.width, canvas.height)),
+    fillRect: (...args) => drawCalls.push(() => ctx.fillRect(...args)),
+    stroke: () => drawCalls.push(() => { ctx.stroke(); ctx.beginPath(); }),
+    moveTo: (...args) => drawCalls.push(() => ctx.moveTo(...args)),
+    lineTo: (...args) => drawCalls.push(() => ctx.lineTo(...args)),
+    fillText: (...args) => drawCalls.push(() => ctx.fillText(...args))
+};
+
+let canvas = document.getElementById('visualization');
+let ctx = canvas.getContext('2d');
+let drawCalls = [];
 
 
 export function open() {
@@ -22,13 +52,13 @@ export function open() {
     
     // Add commands.
     let links = document.createElement('p');
-    for (let [name, command] of Object.entries(commands)) {
+    for (let command of commands) {
         let spacing = document.createTextNode('\u00a0\u00a0\u00a0' + (links.innerHTML == '' ? '\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0' : ''));
         links.appendChild(spacing);
         let link = document.createElement('span');
         link.className = 'command';
-        link.textContent = name;
-        link.addEventListener('click', command);
+        link.textContent = command.name;
+        link.addEventListener('click', () => command.callback());
         links.appendChild(link);
     }
     left.appendChild(links);
@@ -49,7 +79,7 @@ export function open() {
         highlightSelectionMatches: true,
         lint: {
             esversion: 10,
-            globals: ['data', 'log'],
+            globals: ['data', 'await', ...Object.keys(bindings)],
             latedef: 'nofunc',
             strict: 'implied',
             undef: true,
@@ -117,20 +147,64 @@ export function open() {
 
 export function close() {
     if (editor) {
+        clear();
         editor.remove();
+        editor = null;
+        code = null;
+        input = null;
         output = null;
+        source = '';
+        data = '';
     }
 }
 
 
-export function reset(source, data) {
+export function reset(newSource = source, newData = data) {
+    source = newSource;
+    data = newData;
+    
     if (!editor) {
         open();
     }
-    
+    clear();
     code.setValue(source);
     input.setValue(data);
+}
+
+
+function run() {
+    clear();
+    
+    // Start runner worker.
+    runner = new Worker('runner.js');
+    
+    // Set up bindings.
+    runner.onmessage = async function(event) {
+        if (event.data.type == 'call') {
+            runner.postMessage({ type: 'return', index: event.data.index, value: await bindings[event.data.name](...event.data.args) });
+        }
+    }
+    for (let [name, object] of Object.entries(bindings)) {
+        runner.postMessage({ type: 'bind', name: name });
+    }
+    
+    // Run code in runner.
+    runner.postMessage({ type: 'run', source: code.getDoc().getValue(), data: input.getDoc().getValue().trim() });
+}
+
+
+function stop() {
+    if (runner) {
+        runner.terminate();
+        runner = null;
+    }
+}
+
+
+function clear() {
+    stop();
     output.setValue('');
+    canvas.style.visibility = null;
 }
 
 
@@ -140,14 +214,18 @@ function log(text) {
 }
 
 
-commands['Run'] = function() {
-    // Remove visalization.
+function visualize(width, height) {
     let canvas = document.getElementById('visualization');
-    if (canvas) {
-        canvas.remove();
+    canvas.width = width;
+    canvas.height = height;
+    canvas.style.visibility = 'visible';
+}
+
+
+async function drawFrame() {
+    await new Promise(resolve => requestAnimationFrame(() => resolve()));
+    for (let call of drawCalls) {
+        call();
     }
-    
-    // Run code.
-    output.getDoc().setValue('');
-    (new Function('data', 'log', code.getDoc().getValue()))(input.getDoc().getValue().trim(), log);
-};
+    drawCalls = [];
+}

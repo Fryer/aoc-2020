@@ -42,7 +42,6 @@ a:hover, a:focus {
     display: flex;
 }
 canvas {
-    visibility: visible;
     margin: auto;
 }
 

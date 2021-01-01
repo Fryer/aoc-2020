@@ -1,20 +1,12 @@
 let moves = data.split('\n').map(move => [move[0], move.slice(1) * 1]);
-let canvas = document.createElement('canvas');
-canvas.id = 'visualization';
-canvas.width = 900;
-canvas.height = 700;
-document.getElementById('overlay').appendChild(canvas);
-let ctx = canvas.getContext('2d');
+visualize(900, 700);
 let start = performance.now() / 1000;
-function draw() {
-    if (!canvas.parentNode) {
-        return;
-    }
+let drawing = false;
+while (!drawing) {
     let now = performance.now() / 1000 - start;
-    ctx.fillStyle = '#028';
-    ctx.fillRect(0, 0, 900, 700);
-    ctx.beginPath();
-    ctx.moveTo(750, 350);
+    fillStyle('#028');
+    fillRect(0, 0, 900, 700);
+    moveTo(750, 350);
     let x = 0;
     let y = 0;
     let a = 0;
@@ -75,29 +67,27 @@ function draw() {
             drawing = false;
         }
         time += dt;
-        ctx.lineTo(750 + cx / 2, 350 - cy / 2);
+        lineTo(750 + cx / 2, 350 - cy / 2);
     });
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = '#f80';
-    ctx.stroke();
-    ctx.fillStyle = '#0f0';
-    ctx.fillRect(745, 345, 10, 10);
+    lineWidth(2);
+    strokeStyle('#f80');
+    stroke();
+    fillStyle('#0f0');
+    fillRect(745, 345, 10, 10);
     let distance = Math.round(Math.abs(cx) + Math.abs(cy));
     if (drawing) {
-        ctx.fillStyle = '#f00';
-        ctx.fillRect(745 + x / 2, 345 - y / 2, 10, 10);
+        fillStyle('#f00');
+        fillRect(745 + x / 2, 345 - y / 2, 10, 10);
     }
     else {
-        ctx.beginPath();
-        ctx.lineWidth = 10;
-        ctx.moveTo(750 + cx / 2 - 5 * Math.cos(ca), 350 - cy / 2 + 5 * Math.sin(ca));
-        ctx.lineTo(750 + cx / 2 + 10 * Math.cos(ca), 350 - cy / 2 - 10 * Math.sin(ca));
-        ctx.stroke();
-        requestAnimationFrame(draw);
+        lineWidth(10);
+        moveTo(750 + cx / 2 - 5 * Math.cos(ca), 350 - cy / 2 + 5 * Math.sin(ca));
+        lineTo(750 + cx / 2 + 10 * Math.cos(ca), 350 - cy / 2 - 10 * Math.sin(ca));
+        stroke();
     }
-    ctx.font = 'bold 16px monospace';
-    ctx.textAlign = 'center';
-    ctx.fillStyle = '#fff';
-    ctx.fillText('Distance: ' + distance, 750 + cx / 2, 370 - cy / 2);
+    font('bold 16px monospace');
+    textAlign('center');
+    fillStyle('#fff');
+    fillText('Distance: ' + distance, 750 + cx / 2, 370 - cy / 2);
+    await(drawFrame());
 }
-requestAnimationFrame(draw);

@@ -18,12 +18,6 @@ async function run() {
     let selected = hash[0] == 'editor' || (hash[0] > 0 && hash[0] < days.length) ? hash[0] : days.length - 1;
     let selectedExtra = selected != 'editor' && hash.length > 1 && hash[1] >= 0 && hash[1] < days[selected].length ? hash[1] : 0;
     
-    // Remove visalization.
-    let canvas = document.getElementById('visualization');
-    if (canvas) {
-        canvas.remove();
-    }
-    
     // Add day links.
     let nav = document.getElementById('days');
     nav.innerHTML = '';
@@ -83,6 +77,5 @@ async function run() {
 }
 
 
-Editor.open();
 run();
 addEventListener('hashchange', run);
