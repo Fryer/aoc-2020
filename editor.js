@@ -7,10 +7,10 @@ let source = '';
 let data = '';
 
 let commands = [
-    { name: 'Run', callback: run },
-    { name: 'Stop', callback: stop },
-    { name: 'Clear', callback: clear },
-    { name: 'Reset', callback: reset }
+    { name: '\u25b6\ufe0e Run', callback: run },
+    { name: '\u23f9\ufe0e Stop', callback: stop },
+    { name: '\u25c0\ufe0e Clear', callback: clear },
+    { name: '\u{1f504}\ufe0e Reset', callback: reset }
 ];
 
 let runner = null;
