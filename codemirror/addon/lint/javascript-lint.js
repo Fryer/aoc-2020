@@ -23,15 +23,22 @@
     }
     if (!options.indent) // JSHint error.character actually is a column index, this fixes underlining on lines using tabs for indentation
       options.indent = 1; // JSHint default value is 4
+    var prefix = options.prefix;
+    var postfix = options.postfix;
+    delete options.prefix;
+    delete options.postfix;
+    text = (prefix || '') + '\n' + text + '\n' + (postfix || '');
     JSHINT(text, options, options.globals);
+    options.prefix = prefix;
+    options.postfix = postfix;
     var errors = JSHINT.data().errors, result = [];
-    if (errors) parseErrors(errors, result);
+    if (errors) parseErrors(errors, result, -(prefix || '').split('\n').length);
     return result;
   }
 
   CodeMirror.registerHelper("lint", "javascript", validator);
 
-  function parseErrors(errors, output) {
+  function parseErrors(errors, output, lineOffset) {
     for ( var i = 0; i < errors.length; i++) {
       var error = errors[i];
       if (error) {
@@ -54,8 +61,8 @@
         var hint = {
           message: error.reason,
           severity: error.code ? (error.code.startsWith('W') ? "warning" : "error") : "error",
-          from: CodeMirror.Pos(error.line - 1, start),
-          to: CodeMirror.Pos(error.line - 1, end)
+          from: CodeMirror.Pos(lineOffset + error.line - 1, start),
+          to: CodeMirror.Pos(lineOffset + error.line - 1, end)
         };
 
         output.push(hint);

@@ -106,5 +106,5 @@ while (!drawing) {
     textAlign('center');
     fillStyle('#fff');
     fillText('Distance: ' + distance, 850 + cx / 80, 470 - cy / 80);
-    await(drawFrame());
+    await drawFrame();
 }

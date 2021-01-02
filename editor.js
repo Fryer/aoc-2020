@@ -79,7 +79,7 @@ export function open() {
         highlightSelectionMatches: true,
         lint: {
             esversion: 10,
-            globals: ['data', 'await', ...Object.keys(bindings)],
+            globals: ['data', ...Object.keys(bindings)],
             latedef: 'nofunc',
             strict: 'implied',
             undef: true,
@@ -88,7 +88,9 @@ export function open() {
             boss: true,
             loopfunc: true,
             browser: true,
-            devel: true
+            devel: true,
+            prefix: '(async function() {',
+            postfix: '});'
         },
         styleActiveLine: { nonEmpty: true },
         selectionPointer: true,
