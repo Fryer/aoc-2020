@@ -65,14 +65,16 @@ async function run() {
         }
     }
     
-    // Reset editor.
+    // Open editor.
     if (selected == 'editor') {
-        Editor.reset('log(data);\n', '');
+        Editor.protect('', 'log(data);\n', 'Hello, World!');
+        Editor.load('');
     }
     else {
         let data = (await (await fetch(`days/day${selected}.txt`)).text()).replaceAll('\r', '').trim();
         let source = (await (await fetch(`days/${days[selected][selectedExtra].source}`)).text()).replaceAll('\r', '');
-        Editor.reset(source, data);
+        Editor.protect(`${selected}-${selectedExtra}`, source, data);
+        Editor.load(`${selected}-${selectedExtra}`);
     }
 }
 

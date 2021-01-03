@@ -1,16 +1,24 @@
+const GUID = 'fd5c1b86-e8ed-4973-86cc-0070785ea2dc';
+
+
 let editor = null;
 let code = null;
 let input = null;
 let output = null;
 
-let source = '';
-let data = '';
+let protectedFiles = {};
+let file = null;
+let codeGeneration = 0;
+let inputGeneration = 0;
+let autoSaveTimer = null;
+let autoSaveListener = null;
 
 let commands = [
     { name: '\u25b6\ufe0e Run', callback: run },
     { name: '\u23f9\ufe0e Stop', callback: stop },
     { name: '\u25c0\ufe0e Clear', callback: clear },
-    { name: '\u{1f504}\ufe0e Reset', callback: reset }
+    { name: '|' },
+    { name: '\u{1f504}\ufe0e Reload', callback: reload }
 ];
 
 let runner = null;
@@ -56,9 +64,11 @@ export function open() {
         let spacing = document.createTextNode('\u00a0\u00a0\u00a0' + (links.innerHTML == '' ? '\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0' : ''));
         links.appendChild(spacing);
         let link = document.createElement('span');
-        link.className = 'command';
         link.textContent = command.name;
-        link.addEventListener('click', () => command.callback());
+        if (command.callback) {
+            link.className = 'command';
+            link.addEventListener('click', () => command.callback());
+        }
         links.appendChild(link);
     }
     left.appendChild(links);
@@ -148,6 +158,14 @@ export function open() {
 
 
 export function close() {
+    if (autoSaveTimer !== null) {
+        autoSave();
+        clearInterval(autoSaveTimer);
+        autoSaveTimer = null;
+        removeEventListener(autoSaveListener);
+        autoSaveListener = null;
+    }
+    
     if (editor) {
         clear();
         editor.remove();
@@ -155,22 +173,85 @@ export function close() {
         code = null;
         input = null;
         output = null;
-        source = '';
-        data = '';
+        
+        protectedFiles = {};
+        file = null;
+        codeGeneration = 0;
+        inputGeneration = 0;
     }
 }
 
 
-export function reset(newSource = source, newData = data) {
-    source = newSource;
-    data = newData;
+export function protect(file, source, data) {
+    protectedFiles[file] = { source: source, data: data };
+}
+
+
+function reload() {
+    if (file === null) {
+        return;
+    }
     
+    localStorage.removeItem(`${GUID}.tempFiles.${file}`);
+    codeGeneration = code.getDoc().changeGeneration(true);
+    inputGeneration = input.getDoc().changeGeneration(true);
+    load(file);
+}
+
+
+export function load(file) {
     if (!editor) {
         open();
     }
+    
+    if (file === null) {
+        reset(null, '', '');
+        return;
+    }
+    
+    // Load auto-saved file.
+    let fileItem = localStorage.getItem(`${GUID}.tempFiles.${file}`);
+    if (fileItem !== null) {
+        fileItem = JSON.parse(fileItem);
+        reset(file, fileItem.source, fileItem.data);
+        return;
+    }
+    
+    // Load protected file.
+    if (protectedFiles.hasOwnProperty(file)) {
+        reset(file, protectedFiles[file].source, protectedFiles[file].data);
+    }
+}
+
+
+function reset(newFile, source, data) {
+    autoSave();
+    
+    file = newFile;
     clear();
     code.setValue(source);
+    code.getDoc().clearHistory();
     input.setValue(data);
+    input.getDoc().clearHistory();
+    
+    // Activate auto-saving.
+    codeGeneration = code.getDoc().changeGeneration(true);
+    inputGeneration = input.getDoc().changeGeneration(true);
+    if (autoSaveTimer === null) {
+        autoSaveTimer = setInterval(autoSave, 5000);
+        autoSaveListener = addEventListener('beforeunload', autoSave);
+    }
+}
+
+
+function autoSave() {
+    if (file === null || (code.getDoc().isClean(codeGeneration) && input.getDoc().isClean(inputGeneration))) {
+        return;
+    }
+    
+    localStorage.setItem(`${GUID}.tempFiles.${file}`, JSON.stringify({ source: code.getValue(), data: input.getValue() }));
+    codeGeneration = code.getDoc().changeGeneration(true);
+    inputGeneration = input.getDoc().changeGeneration(true);
 }
 
 
@@ -199,6 +280,7 @@ function stop() {
     if (runner) {
         runner.terminate();
         runner = null;
+        drawCalls = [];
     }
 }
 
