@@ -211,8 +211,14 @@ function clear() {
 
 
 function log(text) {
-    let value = output.getDoc().getValue();
-    output.getDoc().setValue(value + text + '\n');
+    let line = output.getDoc().lastLine();
+    if (line > 0) {
+        output.getDoc().replaceRange(text + '\n', { line: line, ch: 0 });
+        output.scrollIntoView({ line: line + 1, ch: 0 });
+    }
+    else {
+        output.getDoc().setValue(text + '\n');
+    }
 }
 
 
